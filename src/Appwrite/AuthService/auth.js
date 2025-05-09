@@ -7,11 +7,11 @@ class Authservice {
 
     constructor() {
         this.Client
-        .setEndpoint("https://fra.cloud.appwrite.io/v1")
-        .setProject("67dd104700078bb8e016");
+        // .setEndpoint("https://fra.cloud.appwrite.io/v1")
+        // .setProject("67dd104700078bb8e016");
        
-        // .setEndpoint(configuration.appwriteUrl)
-        // .setProject(configuration.appwriteProjectId);
+        .setEndpoint(configuration.appwriteUrl)
+        .setProject(configuration.appwriteProjectId);
 
         // if (!configuration.appwrite_url || !configuration.appwrite_projectID) {
         //     throw new Error("Missing Appwrite configuration");

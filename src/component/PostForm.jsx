@@ -10,45 +10,53 @@ function PostForm({post}) {
     const {register,handleSubmit,watch,control,getValues,setValue} = useForm({
         defaultValues:{
             title:post?.title || "",
-            slug:post?.slug || "",
+            slug:post?.$id || "",
             content:post?.content || "",
             status:post?.status || "active"
         } 
     })
     const navigate = useNavigate()
-    const userData = useSelector((state) => state.author.userStatus)
-
+    const userData = useSelector((state) => state.author.userData)
+   console.log(userData)
     const submit = async (data) =>{
-        // jr post asel tr
+      console.log("submit data to appwrite",data);
+        // jr post asel tr -edit post madhun recieved hoil hei post
         if(post){
             const file = data.image[0] ? DBService.uploadFile(data.image[0]) 
             : null
+            // data.image[0] means first image present with in the data Array
 
             // jr old  post asel tr delete kara
             if(file){
                  DBService.deleteFile(post.featuredImage)
             }
+            // here is an error 
             const dbpost = await DBService.UpdatePost(post.$id,{
                 ...data,
                 featuredImage: file? (await file).$id : undefined
             })
             if(dbpost){
-              // hya sathi post component pahije
+              console.log(dbpost.$id)
+              // hya sathi post component pahije pages madhe
                 navigate(`/post/${dbpost.$id}`)
             }
         }
         else{
-          // this is for me to check
+          //to check the image prsent in data or not
           const file = await DBService.uploadFile(data.image[0])
 
           if (file) {
-            const fileId = file.$id
-            data.featuredImage = fileId
+            console.log('file with image:',file);
+            // assign to fileId is extra line we also use the line next 
+            const fileId = file.$id;
+            data.featuredImage = fileId;
            const dbpost= await DBService.CreatePost({
               ...data,
-              UserID :userData.$id,
+              userId: userData.$id
             })
             if (dbpost) {
+              console.log("dbpost:",dbpost)
+               console.log("dbpost id:",dbpost.$id)
               navigate(`/post/${dbpost.$id}`)
             }
           }
@@ -61,7 +69,8 @@ function PostForm({post}) {
         return value
         .trim()
         .toLowerCase()
-        .replace(/^[a-zA-z\d\s]/g,'-')
+        .replace(/^[\d\s]/g,'-')
+        .replace(/\s/g, "-");
       }
       else{
         return ""
@@ -69,7 +78,7 @@ function PostForm({post}) {
     },[])
 
     React.useEffect(() => {
-      const subscription = watch((value, { name }) => {
+      const subscription = watch((value, {name}) => {
           if (name === "title") {
               setValue("slug", slugTransform(value.title), { shouldValidate: true });
           }
@@ -79,9 +88,9 @@ function PostForm({post}) {
   }, [watch, slugTransform, setValue]);
     
   return (
-    <div  style={{height:"700",width:"100%"}}>
+    <div  style={{height:"700px",width:"100%"}} className='p-3'>
            <form onSubmit={handleSubmit(submit)} className='row g-3'>
-            <div className="col-8">
+            <div className="col-6">
             <Input
                     label="Title :"
                     placeholder="Title"
@@ -90,7 +99,7 @@ function PostForm({post}) {
                 />
 
             </div>
-            <div className="col-4">
+            <div className="col-6">
             <Input
                     label="Featured Image :"
                     type="file"
@@ -101,14 +110,14 @@ function PostForm({post}) {
                 {post && (
                     <div className="w-full mb-4">
                         <img
-                            src={appwriteService.getFilePreview(post.featuredImage)}
+                            src={DBService.getFilePreview(post.featuredImage)}
                             alt={post.title}
                             className="rounded-lg"
                         />
                     </div>
                 )}
             </div>
-            <div className="col-8">
+            <div className="col-6">
             <Input
                     label="Slug :"
                     placeholder="Slug"
@@ -119,20 +128,28 @@ function PostForm({post}) {
                     }}
                 />
             </div>
-            <div className="col-4">
+
+            <div className="col-6">
             <Select
+                    label="Status :"
                     options={["active", "inactive"]}
-                    label="Status"
-                    className="mb-4"
                     {...register("status", { required: true })}
                 />
             </div>
-            <div className="col-12">
-            <Button type="submit" bgColor={post ? "bg-green-500" : undefined} className="w-full">
+
+            <div className="col-12 d-flex align-items-center justify-content-center">
+            <Button type="submit" bgcolor={post ? "bg-green-500" : undefined} className="w-full">
                     {post ? "Update" : "Submit"}
                 </Button>
             </div>
-            <RTE label="Content :" name="content" control={control} defaultValue={getValues("content")} />
+            <div className="col-12">
+            {/* <RTE 
+            label="Content :"
+             name="content" 
+             control={control} 
+             defaultValue={getValues("content")}
+            /> */}
+            </div>
            </form>
     </div>
   )

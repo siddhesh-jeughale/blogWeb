@@ -1,6 +1,7 @@
 import React from 'react'
 import { useEffect ,useState} from 'react'
 import appwriteDBservice from "../Appwrite/DatabaseService/DataConfig"
+import { PostCard } from '../component';
 
 function Home() {
 
@@ -29,7 +30,7 @@ function Home() {
                     {
                     post.map((post) => {
                       <div key={post.$id}>
-                        <Postcard {...post}/>
+                        <PostCard {...post}/>
                       </div>
                     }
                     )}

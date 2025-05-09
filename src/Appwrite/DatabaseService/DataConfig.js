@@ -8,10 +8,10 @@ export class DBservice{
 
     constructor(){
         this.client
-        .setEndpoint("https://fra.cloud.appwrite.io/v1")
-        .setProject("67dd104700078bb8e016");
-        // .setEndpoint(Config.appwriteUrl)
-        // .setProject(Config.appwriteProjectId);
+        // .setEndpoint("https://fra.cloud.appwrite.io/v1")
+        // .setProject("67dd104700078bb8e016");
+        .setEndpoint(Config.appwriteUrl)
+        .setProject(Config.appwriteProjectId);
         // if (!Config.appwrite_url || !Config.appwrite_projectID) {
         //     throw new Error("Missing Appwrite configuration");
         // }
@@ -20,19 +20,19 @@ export class DBservice{
          this.bucket = new Storage(this.client)
     }
 
-    async CreatePost({Title,Content,Status,UserID,FeaturedImage,slug}){ 
+    async CreatePost({title,content,status,userId,featuredImage,slug}){ 
         try {
             return await this.database.createDocument(
-                Config.appwrite_databaseID,
-                Config.appwrite_collectionID,
+                Config.appwriteDatabaseId,
+                Config.appwriteCollectionId,
                 ID.unique(),
                 // slug,
                 {
-                    Title,
-                    Content,
-                    Status,
-                    FeaturedImage,
-                    UserID,
+                    title,
+                    content,
+                    status,
+                    featuredImage,
+                    userId,
                 }
             )
         } 
@@ -41,18 +41,18 @@ export class DBservice{
         }
 
     }
-    async UpdatePost(slug,{Title,FeaturedImage,Content,Status}){
+    async UpdatePost(slug,{title,featuredImage,content,status}){
         try {
             return await this.database.updateDocument(
-                Config.appwrite_databaseID,
-                Config.appwrite_collectionID,
-                Config.appwrite_bucketID,
+                Config.appwriteDatabaseId,
+                Config.appwriteCollectionId,
+                Config.appwriteBucketId,
                 slug,
                 {
-                    Title,
-                    Content,
-                    FeaturedImage,
-                    Status,
+                    title,
+                    content,
+                    featuredImage,
+                    status,
                 }
             )
         } 
@@ -63,50 +63,48 @@ export class DBservice{
     async deletePost(){
         try {
             await this.database.deleteDocument(
-                Config.appwrite_databaseID,
-                Config.appwrite_collectionID,
-                Config.appwrite_bucketID,
+                Config.appwriteDatabaseId,
+                Config.appwriteCollectionId,
+                Config.appwriteBucketId,
                 // slug,
                 ID.unique(),
             )
             return true;
         } 
         catch (error) {
-            
+            console.log(error)
         }
     }
-    async getPost(){
+    async getPost(slug){
         try {
             return await this.database.getDocument(
-                Config.appwrite_databaseID,
-                Config.appwrite_collectionID,
-                ID.unique(),
+                Config.appwriteDatabaseId,
+                Config.appwriteCollectionId,
+                slug,
+                // ID.unique(),
             )
         } 
         catch (error) {
-            throw error;
+            console.log("Appwrite serive :: getPost :: error", error);
+            return false;
         }
     }
-    async listofPost(){
+    async listofPost(queries = [Query.equal("status", "active")]){
         try {
             return await this.database.listDocuments(
-                Config.appwrite_databaseID,
-                Config.appwrite_collectionID,
-                // slug,
-                ID.unique(),
-                [
-                    Query.equal("Status","active")
-                ]
+                Config.appwriteDatabaseId,
+                Config.appwriteCollectionId,
+                queries,
             )
         } 
         catch (error) {
-            
+            console.log(error)
         }
     }
     async uploadFile(file){
         try{
             return await this.bucket.createFile(
-                Config.appwrite_bucketID,
+                Config.appwriteBucketId,
                 ID.unique(),
                 file,
             
@@ -119,7 +117,7 @@ export class DBservice{
     async deleteFile(fileId){
         try {
             await this.bucket.deleteFile(
-                Config.appwrite_bucketID,
+                Config.appwriteBucketId,
                 fileId
                 // whate is mean file parameter
             )
@@ -130,7 +128,7 @@ export class DBservice{
     }
      getFilePreview(fileId){
       return this.bucket.getFilePreview(
-        Config.appwrite_bucketID,
+        Config.appwriteBucketId,
          fileId
       )
     }

@@ -20,9 +20,10 @@ function Login() {
       const session = await authservice.login(data);
       if (session) {
         window.alert("Login Successfully!.")
-        const userdata = authservice.getCurrentUser()
+        const userdata = await authservice.getCurrentUser()
         if (userdata) {
-          dispatch(authlogin())
+          console.log("exsisting user data dispatch:",userdata);
+          dispatch(authlogin(userdata))
           navigate("/");
         } 
       } 

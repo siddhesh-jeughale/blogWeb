@@ -12,6 +12,7 @@ import AddPost from "./pages/AddPost.jsx"
 import AllPost from "./pages/AllPost.jsx"
 import EditPost from "./pages/EditPost.jsx"
 import Home from './pages/Home.jsx'
+import Post from './pages/Post.jsx'
 
 
 
@@ -67,6 +68,10 @@ import Home from './pages/Home.jsx'
                 <EditPost />
             </AuthLayout>
         ),
+    },
+    {
+      path: "/post/:slug",
+      element: <Post />,
     },
  
     ]

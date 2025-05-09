@@ -4,11 +4,11 @@ import appwriteService from "../Appwrite/DatabaseService/DataConfig"
 
 
 function PostCard({ $id, title, featuredImage }) {
-
+     console.log(appwriteService.getFilePreview(featuredImage));
     return (
         <>
-            <Link to={`/post/${$id}`}>
-                <div className="card" style={{ width: "18rem" }}>
+            <Link to={`/post/${$id}`} style={{ textDecoration: 'none', color: 'inherit' }}>
+                <div className="card" style={{ width: "300px",height:"300px" }}>
                     <img src={appwriteService.getFilePreview(featuredImage)}
                         className='card-img-top'
                         alt={title} />
@@ -22,4 +22,4 @@ function PostCard({ $id, title, featuredImage }) {
     )
 }
 
-export default PostCard;
+export default PostCard;     

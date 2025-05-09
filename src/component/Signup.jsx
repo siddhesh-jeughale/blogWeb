@@ -17,9 +17,10 @@ function Signup() {
     setError("");
     try {
       const userdata = await authservice.createAccount(data);
-      console.log(userdata);
+      // console.log(userdata);
       if (userdata) {
-        window.alert("Register Successfully! Please Login.")
+        window.alert("Register Successfully! Please Login.");
+        navigate("/login");
       }
      
       // if (userdata) {
